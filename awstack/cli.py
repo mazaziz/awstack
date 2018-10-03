@@ -6,7 +6,7 @@ Usage:
   awstack local [-d PATH]
   awstack create [-t] [-d PATH] [-p PROFILE]
   awstack (status|s) [-w] [-d PATH] [-p PROFILE]
-  awstack (validate|remote|diff|resources|exports|changesets|css) [-d PATH] [-p PROFILE]
+  awstack (validate|remote|diff|resources|outputs|changesets|css) [-d PATH] [-p PROFILE]
   awstack (changeset|cs) NAME (create|c|preview|p|execute|e) [-d PATH] [-p PROFILE]
   awstack account (stacks|exports) [-p PROFILE]
 
@@ -29,7 +29,7 @@ Commands:
   status|s         display stack status
   validate         validate local template
   resources        display provisioned resources
-  exports          display exported values
+  outputs          display output values
   changesets|css   display created change sets
   changeset|cs
     create|c       create change set
@@ -73,7 +73,7 @@ def main():
         handler.handle_account_exports(opts)
     elif opts["resources"]:
         handler.handle_resources(opts)
-    elif opts["exports"]:
-        handler.handle_exports(opts)
+    elif opts["outputs"]:
+        handler.handle_outputs(opts)
     else:
         raise Exception("unhandled command")

@@ -145,7 +145,7 @@ class Stack:
         )
         return resp["StackResourceSummaries"]
     
-    def get_exports(self) -> list:
+    def get_outputs(self) -> list:
         return self.get_info().get("Outputs", [])
 
     def get_template(self, indent=None) -> dict:

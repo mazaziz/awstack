@@ -116,9 +116,13 @@ def handle_resources(opts):
             item["ResourceType"]
         ))
 
-def handle_exports(opts):
-    for item in load_stack(opts).get_exports():
-        print("{} = {}".format(item["ExportName"], item["OutputValue"]))
+def handle_outputs(opts):
+    for item in load_stack(opts).get_outputs():
+        print("{} = {}{}".format(
+            item["OutputKey"], 
+            item["OutputValue"],
+            "" if "ExportName" not in item else " [{}]".format(item["ExportName"])
+        ))
 
 def handle_account_stacks(opts):
     for item in Stacks.load(opts["--profile"]).get_stacks():
