@@ -32,6 +32,7 @@ class LocalStack:
         return {
             "AWSTemplateFormatVersion": self.template_version,
             "Description": self.description,
+            "Parameters": LocalStack.assemble("{}/parameters".format(self.path)),
             "Resources": LocalStack.assemble("{}/resources".format(self.path)),
             "Outputs": LocalStack.assemble("{}/outputs".format(self.path))
         }
@@ -45,6 +46,7 @@ class LocalStack:
             os.mkdir(path)
         os.mkdir("{}/outputs".format(path))
         os.mkdir("{}/resources".format(path))
+        os.mkdir("{}/parameters".format(path))
         with open("{}/manifest.json".format(path), mode="w") as fh:
             fh.write("{}\n".format(json.dumps({
                 "name": name,
