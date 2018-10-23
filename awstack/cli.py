@@ -3,10 +3,10 @@
 Usage:
   awstack -h|--help
   awstack init [-d PATH] [-p PROFILE] [-n NAME] [--desc TEXT]
-  awstack local [-d PATH]
+  awstack template [-d PATH] [-r]
   awstack create [-t] [-d PATH] [-p PROFILE]
   awstack (status|s) [-w] [-d PATH] [-p PROFILE]
-  awstack (validate|remote|diff|resources|outputs|changesets|css) [-d PATH] [-p PROFILE]
+  awstack (validate|diff|resources|outputs|changesets|css) [-d PATH] [-p PROFILE]
   awstack (changeset|cs) NAME (create|c|preview|p|execute|e) [-d PATH] [-p PROFILE]
   awstack account (stacks|exports) [-p PROFILE]
 
@@ -19,10 +19,11 @@ Options:
   --desc TEXT           description about the stack
   -t                    disable stack termination protection
   -w,--watch            keep probing until stack progress completes
+  -r,--remote           use the deployed stack on aws
 
 Commands:
   init             create an empty stack skeleton in specified path
-  local            display local template
+  template         display stack template
   remote           display currently active template on aws
   diff             display template's unified diff between remote and local
   create           create new stack on aws using local template
@@ -57,14 +58,12 @@ def main():
         handler.handle_init(opts)
     elif opts["status"] or opts["s"]:
         handler.handle_status(opts)
-    elif opts["local"]:
-        handler.handle_local(opts)
+    elif opts["template"]:
+        handler.handle_template(opts)
     elif opts["validate"]:
         handler.handle_validate(opts)
     elif opts["diff"]:
         handler.handle_diff(opts)
-    elif opts["remote"]:
-        handler.handle_remote(opts)
     elif opts["create"]:
         handler.handle_create(opts)
     elif opts["account"] and opts["stacks"]:

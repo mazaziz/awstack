@@ -61,14 +61,14 @@ def handle_status(opts):
     else:
         print(stack.get_status()[0])
 
-def handle_local(opts):
-    path = opts["--path"] or os.path.realpath(os.path.curdir)
-    template = LocalStack.load(path).get_template()
-    print(json.dumps(template, indent=4))
-
-def handle_remote(opts):
-    template = load_stack(opts).get_template()
-    print(json.dumps(template, indent=4))
+def handle_template(opts):
+    if opts["--remote"]:
+        template = load_stack(opts).get_template()
+        print(json.dumps(template, indent=4))
+    else:
+        path = opts["--path"] or os.path.realpath(os.path.curdir)
+        template = LocalStack.load(path).get_template()
+        print(json.dumps(template, indent=4))
 
 def handle_validate(opts):
     load_stack(opts).validate()
