@@ -4,6 +4,7 @@ Usage:
   awstack -h|--help
   awstack init [-d PATH] [-p PROFILE] [-n NAME] [--desc TEXT]
   awstack template [-d PATH] [-r]
+  awstack params [-d PATH] [-p PROFILE]
   awstack create [-t] [-d PATH] [-p PROFILE]
   awstack (status|s) [-w] [-d PATH] [-p PROFILE]
   awstack (validate|diff|resources|outputs|changesets|css) [-d PATH] [-p PROFILE]
@@ -74,5 +75,7 @@ def main():
         handler.handle_resources(opts)
     elif opts["outputs"]:
         handler.handle_outputs(opts)
+    elif opts["params"]:
+        handler.handle_params(opts)
     else:
         raise Exception("unhandled command")

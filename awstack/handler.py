@@ -90,8 +90,14 @@ def handle_changesets(opts):
 
 def handle_changeset_create(opts):
     stack = load_stack(opts)
-    stack.create_changeset(opts["NAME"])
-    watch_changeset_status(stack, opts["NAME"])
+    parameters = stack.get_parameters()
+    for i, _ in enumerate(parameters):
+        del parameters[i]["ParameterValue"]
+        parameters[i]["UsePreviousValue"] = True
+    stack.create_changeset(opts["NAME"], parameters)
+    status = watch_changeset_status(stack, opts["NAME"])
+    if status == "FAILED":
+        print("reason: {}".format(stack.get_changeset(opts["NAME"]).get("StatusReason", "unknown")))
 
 def handle_changeset_preview(opts):
     changeset = load_stack(opts).get_changeset(opts["NAME"])
@@ -131,3 +137,7 @@ def handle_account_stacks(opts):
 def handle_account_exports(opts):
     for item in Stacks.load(opts["--profile"]).get_exports():
         print("{} = {}".format(item["Name"], item["Value"]))
+
+def handle_params(opts):
+    for i in load_stack(opts).get_parameters():
+        print("{}: {}".format(i["ParameterKey"], i["ParameterValue"]))

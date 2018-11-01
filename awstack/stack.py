@@ -27,15 +27,17 @@ class LocalStack:
     
     def _attr_profile(self):
         return self.manifest.get("profile", "default")
-    
+
     def get_template(self) -> dict:
-        return {
-            "AWSTemplateFormatVersion": self.template_version,
-            "Description": self.description,
-            "Parameters": LocalStack.assemble("{}/parameters".format(self.path)),
-            "Resources": LocalStack.assemble("{}/resources".format(self.path)),
-            "Outputs": LocalStack.assemble("{}/outputs".format(self.path))
-        }
+        t = {}
+        t["AWSTemplateFormatVersion"] = self.template_version
+        t["Description"] = self.description
+        t["Parameters"] = LocalStack.assemble("{}/parameters".format(self.path))
+        if "transform" in self.manifest:
+            t["Transform"] = self.manifest["transform"]
+        t["Resources"] = LocalStack.assemble("{}/resources".format(self.path))
+        t["Outputs"] = LocalStack.assemble("{}/outputs".format(self.path))
+        return t
     
     @staticmethod
     def create_skeleton(path, profile, name, desc) -> "LocalStack":
@@ -86,6 +88,9 @@ class Stack:
     def __init__(self, lstack: LocalStack, cf):
         self.lstack = lstack
         self.cf = cf
+    
+    def get_parameters(self):
+        return self.get_info().get("Parameters", [])
 
     def create_stack(self, termination_protection):
         self.cf.create_stack(
@@ -109,12 +114,14 @@ class Stack:
         status = self.get_info()["StackStatus"]
         return status, status.endswith("_IN_PROGRESS")
 
-    def create_changeset(self, name):
+    def create_changeset(self, name, parameters):
         self.cf.create_change_set(
             StackName=self.lstack.name,
             TemplateBody=json.dumps(self.lstack.get_template()),
             ChangeSetName=name,
-            Capabilities=["CAPABILITY_NAMED_IAM"]
+            Capabilities=["CAPABILITY_NAMED_IAM"],
+            Parameters=parameters,
+            ChangeSetType="UPDATE"
         )
 
     def get_changeset(self, name) -> dict:
